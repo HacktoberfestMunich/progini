@@ -52,7 +52,7 @@ if pi_camera_available:
             return self.camera.__enter__()
 
         def __exit__(self):
-            self.camera.close()
+            self.camera.__exit__()
 
 
 class FileCamera(Camera):
