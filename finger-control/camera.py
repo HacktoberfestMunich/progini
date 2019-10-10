@@ -83,17 +83,13 @@ class CameraFactory:
         if source is not None:
             if source == 'camera':
                 try:
-                    PiCamera(RESOLUTION_WITH, RESOLUTION_HEIGHT)
+                    return PiCamera(RESOLUTION_WITH, RESOLUTION_HEIGHT)
                 except NameError:
                     print('PiCamera not defined. May be missing -input argument.')
-                else:
-                    return PiCamera(RESOLUTION_WITH, RESOLUTION_HEIGHT)
             elif source == 'file':
                 try:
-                    FileCamera(folder, file_name)
+                    return FileCamera(folder, file_name)
                 except NameError:
                     print('FileCamera not defined.')
-                else:
-                    return FileCamera(folder, file_name)
         else:
             raise LookupError('No matching object found')
