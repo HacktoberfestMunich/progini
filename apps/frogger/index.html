@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Frogger</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+        .btn{
+            background-color: aqua;
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            text-align: center;
+        }
+        body{
+
+        }
+
+        #controls{
+            background-color: red;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            margin: 50px;
+        }
+
+        #left{
+            top: 50px;
+            left: 0px;
+            transform: rotate(270deg);
+        }
+
+        #right{
+            top: 50px;
+            right: 0px;
+            transform: rotate(90deg);
+        }
+
+        #down{
+            bottom: 0px;
+            left: 50px;
+            transform: rotate(180deg);
+        }
+
+        #up{
+            top: 0px;
+            left: 50px;
+        }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas" width="1280" height="720"></canvas>
+<div id="controls">
+    <div id="up" class="btn" onmouseover="onControlOver('up')" onmouseout="onControlOut('up')">👆</div>
+    <div id="left" class="btn" onmouseover="onControlOver('left')" onmouseout="onControlOut('left')">👆</div>
+    <div id="right" class="btn" onmouseover="onControlOver('right')" onmouseout="onControlOut('right')">👆</div>
+    <div id="down" class="btn" onmouseover="onControlOver('down')" onmouseout="onControlOut('down')">👆</div>
+</div>
+<script>
+
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+var frogx = 590;
+var frogy = 670;
+
+var direction = null;
+
+var draw = function(){
+    console.log("draw" + new Date());
+
+
+
+    switch(direction){
+        case "up":
+            frogy -=50;
+            break;
+        case "left":
+            frogx -= 50;
+            break;
+        case "right":
+            frogx += 50;
+            break;
+        case "down":
+            frogy += 50;
+            break;
+    }
+
+    if(frogy > canvas.height){
+        frogy = canvas.height - 50;
+    }
+
+    if(frogy < 0){
+        frogy = 0;
+    }
+
+    if(frogx > canvas.width){
+        frogx = canvas.width - 50;
+    }
+
+    if(frogx < 0){
+        frogx = 0;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.beginPath();
+    ctx.rect(frogx, frogy, 50, 50);
+    ctx.fillStyle = "#00ff00";
+    ctx.fill();
+    ctx.closePath();
+
+    setTimeout(function() {requestAnimationFrame(draw)}, 750);
+
+}
+
+function onControlOver(updateDirection){
+    console.log("OVER " + updateDirection);
+    direction = updateDirection;
+}
+
+function onControlOut(updateDirection){
+    console.log("OUT " + updateDirection);
+    direction = null;
+}
+
+function moveFrog(direction){
+
+}
+draw();
+
+</script>
+
+</body>
+</html>
