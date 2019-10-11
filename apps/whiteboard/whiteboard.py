@@ -37,6 +37,15 @@ minusText = font.render("-", True, black)
 plusRect = pygame.Rect(100, screen_height - 100, 100, 100)
 minusRect = pygame.Rect(0, screen_height - 100, 100, 100)
 
+def refreshStatusText(isDrawing, color, thickness):
+    global text, font
+    if isDrawing:
+        text = font.render("Drawing: ({}, {}, {}) {}px".format(
+            color[0], color[1], color[2], thickness), True, color)
+    else:
+        text = font.render("Not drawing: ({}, {}, {}) {}px".format(
+            color[0], color[1], color[2], thickness), True, color)
+
 while 1:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -65,33 +74,20 @@ while 1:
     if (not drawingModeChanged) and (pygame.time.get_ticks() - lastMovementTime >= 1000):
         if pygame.mouse.get_pos()[0] > screen_width - (screen_height / len(colorList)):
             currentColor = screen.get_at(pygame.mouse.get_pos())
-            if drawing:
-                text = font.render("Drawing\n({}, {}, {})\n{}".format(currentColor[0], currentColor[1], currentColor[2], currentThickness), True, currentColor)
-            else:
-                text = font.render("Not drawing\n({}, {}, {})\n{}".format(currentColor[0], currentColor[1], currentColor[2], currentThickness), True, currentColor)
         elif minusRect.collidepoint(pygame.mouse.get_pos()):
             if currentThickness > initialLineThickness:
                 currentThickness -= 1
-            if drawing:
-                text = font.render("Drawing\n({}, {}, {})\n{}".format(currentColor[0], currentColor[1], currentColor[2], currentThickness), True, currentColor)
-            else:
-                text = font.render("Not drawing\n({}, {}, {})\n{}".format(currentColor[0], currentColor[1], currentColor[2], currentThickness), True, currentColor)
         elif plusRect.collidepoint(pygame.mouse.get_pos()):
             currentThickness += 1
-            if drawing:
-                text = font.render("Drawing\n({}, {}, {})\n{}".format(currentColor[0], currentColor[1], currentColor[2], currentThickness), True, currentColor)
-            else:
-                text = font.render("Not drawing\n({}, {}, {})\n{}".format(currentColor[0], currentColor[1], currentColor[2], currentThickness), True, currentColor)
         else:
             drawing = not drawing
             drawingModeChanged = True
             if drawing:
-                text = font.render("Drawing\n({}, {}, {})\n{}".format(currentColor[0], currentColor[1], currentColor[2], currentThickness), True, currentColor)
                 lines.append([])
                 lineColors.append(currentColor)
                 lineThicknesses.append(currentThickness)
-            else:
-                text = font.render("Not drawing\n({}, {}, {})\n{}".format(currentColor[0], currentColor[1], currentColor[2], currentThickness), True, currentColor)
+
+    refreshStatusText(drawing, currentColor, currentThickness)
 
     if drawing:
         lines[-1].append(pygame.mouse.get_pos())
