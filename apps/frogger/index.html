@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Frogger</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+        .btn{
+            background-color: aqua;
+            opacity: 0.7;
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            text-align: center;
+            font-size: 50px;
+        }
+        body{
+
+        }
+
+        #controls{
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 340px;
+            height: 340px;
+            margin: 50px;
+        }
+
+        #left{
+            top: 120px;
+            left: 0px;
+            transform: rotate(270deg);
+        }
+
+        #right{
+            top: 120px;
+            right: 0px;
+            transform: rotate(90deg);
+        }
+
+        #down{
+            bottom: 0px;
+            left: 120px;
+            transform: rotate(180deg);
+        }
+
+        #up{
+            top: 0px;
+            left: 120px;
+        }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas" width="1280" height="720"></canvas>
+<div id="controls">
+    <div id="up" class="btn" onmouseover="onControlOver('up')" onmouseout="onControlOut('up')">&#8593;</div>
+    <div id="left" class="btn" onmouseover="onControlOver('left')" onmouseout="onControlOut('left')">&#8593;</div>
+    <div id="right" class="btn" onmouseover="onControlOver('right')" onmouseout="onControlOut('right')">&#8593;</div>
+    <div id="down" class="btn" onmouseover="onControlOver('down')" onmouseout="onControlOut('down')">&#8593;</div>
+</div>
+<script>
+
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+var frogx = 590;
+var frogy = 670;
+
+var direction = null;
+var crash = false;
+
+var draw = function(){
+    console.log("draw" + new Date());
+
+    ctx.clearRect(frogx, frogy, 50, 50);
+
+    if(crash){
+        frogx = ((canvas.width -50) / 2);
+        frogy = (canvas.height - 50);
+        crash = false;
+    }
+
+    switch(direction){
+        case "up":
+            frogy -=50;
+            break;
+        case "left":
+            frogx -= 50;
+            break;
+        case "right":
+            frogx += 50;
+            break;
+        case "down":
+            frogy += 50;
+            break;
+    }
+
+    if(frogy > canvas.height){
+        frogy = canvas.height - 50;
+    }
+
+    if(frogy < 0){
+        frogy = 0;
+    }
+
+    if(frogx > canvas.width){
+        frogx = canvas.width - 50;
+    }
+
+    if(frogx < 0){
+        frogx = 0;
+    }
+
+    drawPond();
+
+    ctx.beginPath();
+    ctx.rect(frogx, frogy, 50, 50);
+    ctx.fillStyle = "#00ff00";
+    ctx.fill();
+    ctx.closePath();
+
+    setTimeout(function() {requestAnimationFrame(draw)}, 750);
+}
+
+var carX = 0;
+var carY = 300;
+var carDirection = 1;
+
+function drawCar(){
+
+    ctx.clearRect(carX, carY, 50, 50);
+
+    carX += carDirection * 4;
+
+    ctx.beginPath();
+    ctx.rect(carX, carY, 50, 50);
+    ctx.fillStyle = "#ff0000";
+    ctx.fill();
+    ctx.closePath();
+
+    if(carX > canvas.width - 50){
+        carDirection = -1;
+    }
+
+    if(carX < 0){
+        carDirection = 1;
+    }
+
+    detectCollition();
+
+    requestAnimationFrame(drawCar);
+}
+
+function drawPond(){
+    ctx.beginPath();
+    ctx.arc((canvas.width - 50) / 2, 0, 100, 0, 2 * Math.PI);
+    ctx.fillStyle = "#00f";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function detectCollition(){
+
+    if(crash){
+        return;
+    }
+
+    var frogTop = frogy;
+    var frogBottom = frogy + 50;
+    var frogStart = frogx;
+    var frogEnd = frogx + 50;
+
+    var carTop = carY;
+    var carBottom = carY + 50;
+    var carStart = carX;
+    var carEnd = carX + 50;
+
+    //horizontal match
+    if(frogTop < carBottom && frogBottom > carTop
+        && frogStart < carEnd && frogEnd > carEnd){
+        alert("YOU DIED!!! TRY AGAIN!!");
+        crash = true;
+    }
+
+    var pondStart = (canvas.width - 50) / 2 + 100;
+    var pondEnd = (canvas.width - 50) / 2 - 100;
+    var pondBottom = 100;
+
+    console.log("frog: " + frogStart + ", " + frogEnd + ", " + frogBottom);
+    console.log("pond: " + pondStart + ", " + pondEnd + ", " + pondBottom);
+    //frog: 590, 640, 50
+    //pond: 715, 515, 100
+    if(frogBottom < pondBottom && frogStart < pondStart && frogEnd > pondEnd){
+        alert("Congratulations! You reached the pond!!!!!");
+        crash = true;
+    }
+
+}
+
+function onControlOver(updateDirection){
+    console.log("OVER " + updateDirection);
+    direction = updateDirection;
+}
+
+function onControlOut(updateDirection){
+    console.log("OUT " + updateDirection);
+    direction = null;
+}
+
+function moveFrog(direction){
+
+}
+draw();
+drawCar();
+drawPond();
+
+</script>
+
+</body>
+</html>
